@@ -6,8 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
-
-public class ImageProcessing {
+/**
+ * This abstract class is used to process images.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
+public abstract class ImageProcessing {
 	public static final int A = 0;
 	public static final int R = 1;
 	public static final int G = 2;

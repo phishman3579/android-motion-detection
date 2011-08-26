@@ -1,5 +1,12 @@
 package com.jwetherell.motion_detection.detection;
 
+/**
+ * This class is adapted from the web site below. It is used to indicate the variance in two state objects.
+ * http://mindmeat.blogspot.com/2008/11/java-image-comparison.html
+ * 
+ * @author Pat Cullen
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class Comparison {
 	private State s1;
 	private State s2;

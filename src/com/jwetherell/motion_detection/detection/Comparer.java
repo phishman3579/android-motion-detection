@@ -2,6 +2,13 @@ package com.jwetherell.motion_detection.detection;
 
 import android.util.Log;
 
+/**
+ * This class is adapted from the web site below. It is used to compare two State objects.
+ * http://mindmeat.blogspot.com/2008/11/java-image-comparison.html
+ * 
+ * @author Pat Cullen
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class Comparer {
 	private static final String TAG = "Comparer";
 	

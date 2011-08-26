@@ -20,7 +20,12 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-
+/**
+ * This class extends Activity to handle a picture preview, process the frame for motion, and then save the 
+ * file to the SD card.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class MotionDetectionActivity extends Activity {
 	private static final String TAG = "MotionDetectionActivity";
 	private static final boolean SAVE_PREVIOUS = true;

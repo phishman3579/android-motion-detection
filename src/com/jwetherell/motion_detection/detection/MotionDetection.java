@@ -5,8 +5,12 @@ import com.jwetherell.motion_detection.image.ImageProcessing;
 import android.graphics.Color;
 import android.util.Log;
 
-
-public class MotionDetection {
+/**
+ * This abstract class is used to process integer arrays containing RGB data and detects motion.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
+public abstract class MotionDetection {
 	private static final String TAG = "MotionDetection";
 	private static final boolean USE_RGB = true;
 	private static final boolean USE_HSL = false;
