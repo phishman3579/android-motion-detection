@@ -99,6 +99,8 @@ public class ImageProcessing {
 	}
 
 	public static int[] decodeYUV420SP(byte[] yuv420sp, int width, int height) {
+		if (yuv420sp==null) return null;
+		
 		final int frameSize = width * height;
 		int[] rgb = new int[frameSize];
 

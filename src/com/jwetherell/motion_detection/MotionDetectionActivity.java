@@ -77,15 +77,8 @@ public class MotionDetectionActivity extends Activity {
 			Camera.Size size = cam.getParameters().getPreviewSize();
 			if (size == null) return;
 
-			if (!processing.compareAndSet(false, true)) return;
-			DetectionThread thread = new DetectionThread(data,size.width,size.height);
-			thread.start();
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			processing.set(false);
+				DetectionThread thread = new DetectionThread(data,size.width,size.height);
+				thread.start();
 		}
 	};
 
@@ -151,6 +144,8 @@ public class MotionDetectionActivity extends Activity {
 		
 	    @Override
 	    public void run() {
+			if (!processing.compareAndSet(false, true)) return;
+			
 			Looper.prepare();
 			Log.d(TAG, "BEGIN PROCESSING...");
 	        try {
@@ -163,9 +158,9 @@ public class MotionDetectionActivity extends Activity {
 				
 				//Current frame (without changes)
 				int[] org = null;
-				if (SAVE_ORIGINAL) org = rgb.clone();
+				if (SAVE_ORIGINAL && rgb!=null) org = rgb.clone();
 				
-				if (MotionDetection.detect(rgb, width, height)) {
+				if (rgb!=null && MotionDetection.detect(rgb, width, height)) {
 					// The delay is necessary to avoid taking a picture while in the
 					// middle of taking another. This problem can causes some phones
 					// to reboot.
@@ -174,13 +169,13 @@ public class MotionDetectionActivity extends Activity {
 						mReferenceTime = now;
 						
 						Bitmap previous = null;
-						if (SAVE_PREVIOUS) previous = ImageProcessing.rgbToBitmap(pre, width, height);
+						if (SAVE_PREVIOUS && pre!=null) previous = ImageProcessing.rgbToBitmap(pre, width, height);
 						
 						Bitmap original = null;
-						if (SAVE_ORIGINAL) original = ImageProcessing.rgbToBitmap(org, width, height);
+						if (SAVE_ORIGINAL && org!=null) original = ImageProcessing.rgbToBitmap(org, width, height);
 						
 						Bitmap bitmap = null;
-						if (SAVE_CHANGES) bitmap = ImageProcessing.rgbToBitmap(rgb, width, height);
+						if (SAVE_CHANGES && rgb!=null) bitmap = ImageProcessing.rgbToBitmap(rgb, width, height);
 						
 						Log.i(TAG,"Saving.. previous="+previous+" original="+original+" bitmap="+bitmap);
 						new SavePhotoTask().execute(previous,original,bitmap);
@@ -190,8 +185,12 @@ public class MotionDetectionActivity extends Activity {
 				}
 	        } catch (Exception e) {
 	            e.printStackTrace();
+	        } finally {
+	        	processing.set(false);
 	        }
 			Log.d(TAG, "END PROCESSING...");
+
+			processing.set(false);
 	    }
 	};
 
