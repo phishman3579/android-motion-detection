@@ -17,6 +17,8 @@ public class State {
 	private int average;
 	
 	public State(int[] data, int width, int height) {
+		if (data==null) return;
+		
 		this.width = width;
 		this.height = height;
 		

@@ -28,6 +28,7 @@ public abstract class MotionDetection {
 	}
 
 	protected static boolean isDifferentComparingState(int[] first, int width, int height) {
+		if (first==null || mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
@@ -55,6 +56,7 @@ public abstract class MotionDetection {
 	}
 	
 	protected static boolean isDifferentComparingRGB(int[] first, int width, int height) {
+		if (first==null || mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
@@ -94,6 +96,7 @@ public abstract class MotionDetection {
 	}
 	
 	protected static boolean isDifferentComparingHSL(int[] first, int width, int height) {
+		if (first==null || mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
@@ -136,6 +139,7 @@ public abstract class MotionDetection {
 	}
 
 	public static boolean detect(int[] data, int width, int height) {
+		if (data==null) return false;
 		int[] original = data.clone();
 		
 		// Create the "mPrevious" picture, the one that will be used to check the next frame against.

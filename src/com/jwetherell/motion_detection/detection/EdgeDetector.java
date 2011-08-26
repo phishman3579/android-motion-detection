@@ -33,6 +33,8 @@ public class EdgeDetector {
 	}
 	
 	public int[][] process(int[][] map) {
+		if (map==null) return null;
+		
 		// mapped is a new array that contains the kernel manipulated values.
 		int[][] mapped = new int[map.length][map[0].length];
 		// run through every value in the map
@@ -49,6 +51,8 @@ public class EdgeDetector {
 	}
 	
 	private static double kernelValue(double[][] k, int[][] map, int x, int y) {
+		if (k==null || map==null) return Double.MIN_VALUE;
+		
 		// loop through the kernel and multiply the kernel value against the respective map value
 		double temp = 0;
 		int vmx, vmy;

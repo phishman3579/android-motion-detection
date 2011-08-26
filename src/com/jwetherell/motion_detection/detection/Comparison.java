@@ -18,8 +18,10 @@ public class Comparison {
 	public Comparison(State s1, State s2, int[][] variance, boolean different) {
 		this.s1 = s1;
 		this.s2 = s2;
-		this.variance = variance;
 		this.different = different;
+		
+		if (variance==null) return;
+		this.variance = variance;
 		this.height = variance.length;
 		this.width = variance[0].length;
 	}

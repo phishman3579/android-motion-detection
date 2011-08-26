@@ -31,6 +31,8 @@ public class Comparer {
 	
 	// compare two images.
 	public Comparison compare(State s1, State s2) {
+		if (s1==null || s2==null) return null;
+		
 		int cx = comparex;
 		if (cx > s1.getWidth()) cx = s1.getWidth();
 		int cy = comparey;
@@ -70,6 +72,8 @@ public class Comparer {
 	}
 	
 	private static int aggregateMapArea(int[][] map, int ox, int oy, int w, int h) {
+		if (map==null) return Integer.MIN_VALUE;
+		
 		int t = 0;
 		for (int i = 0; i < h; i++) {
 			int ty = oy+i;

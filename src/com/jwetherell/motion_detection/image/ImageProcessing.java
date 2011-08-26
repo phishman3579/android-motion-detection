@@ -133,12 +133,16 @@ public abstract class ImageProcessing {
 	}
 
 	public static Bitmap rgbToBitmap(int[] rgb, int width, int height) {
+		if (rgb==null) return null;
+		
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		bitmap.setPixels(rgb, 0, width, 0, 0, width, height);
 		return bitmap;
 	}
 	
 	public static Bitmap rotate(Bitmap bmp, int degrees) {
+		if (bmp==null) return null;
+		
         //getting scales of the image  
         int width = bmp.getWidth();  
         int height = bmp.getHeight();  
@@ -155,6 +159,8 @@ public abstract class ImageProcessing {
 	}
 	
 	public static byte[] rotate(byte[] data, int degrees) {
+		if (data==null) return null;
+		
 		//Convert the byte data into a Bitmap
         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);  
 
