@@ -110,6 +110,7 @@ public abstract class ImageProcessing {
         l *= 100;
 
         //Convert the HSL into a single "brightness" representation
+        //brightness is between 0-100 using 50% lightness and 50% hue
 		return (float)((l * 0.5) + ((h / 360) * 50));
 	}
 
