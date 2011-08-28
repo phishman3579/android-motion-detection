@@ -110,7 +110,7 @@ public abstract class ImageProcessing {
         l *= 100;
 
         //Convert the HSL into a single "brightness" representation
-		return (float)(l * 0.5 + ((h / 360) * 50));
+		return (float)((l * 0.5) + ((h / 360) * 50));
 	}
 
 	public static int[] decodeYUV420SP(byte[] yuv420sp, int width, int height) {
