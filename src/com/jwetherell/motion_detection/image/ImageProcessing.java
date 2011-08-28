@@ -31,6 +31,8 @@ public abstract class ImageProcessing {
 	}
 	
 	//Get HSL from RGB
+    //H is 0-360 (degrees)
+    //H and S are 0-100 (percent)
 	public static float[] convertToHSL(int r, int g, int b) {
         float red = r / 255;
         float green = g / 255;
