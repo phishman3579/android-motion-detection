@@ -32,38 +32,42 @@ public abstract class ImageProcessing {
 	
 	//Get HSL from RGB
 	public static float[] convertToHSL(int r, int g, int b) {
-		float minComponent = Math.min(r, Math.min(g, b));
-        float maxComponent = Math.max(r, Math.max(g, b));
+        float red = r / 255;
+        float green = g / 255;
+        float blue = b / 255;
+        
+		float minComponent = Math.min(red, Math.min(green, blue));
+        float maxComponent = Math.max(red, Math.max(green, blue));
         float range = maxComponent - minComponent;
         float[] HSL = new float[3];
         
-        HSL[L] = maxComponent;
+        HSL[L] = (maxComponent + minComponent) / 2;
 
         if(range == 0) { // Monochrome image
         	HSL[H] = HSL[S] = 0;
         } else {
             HSL[S] = 	(HSL[L] > 0.5) ? 
-		    				range / (2 - maxComponent - minComponent) 
+		    				range / (2 - range) 
 		    			: 
 		    				range / (maxComponent + minComponent);
-    				
-            float red = r;
-            float green = g;
-            float blue = b;
-            red /= 255;
-            green /= 255;
-            blue /= 255;
             
-            if(r == maxComponent) {
-            	HSL[H] = (blue - green) / range + (green < blue ? 6 : 0);
-            } else if(g == maxComponent) {
-            	HSL[H] = (blue - red) / range + 2;
-            } else if(b == maxComponent) {
-            	HSL[H] = (red - green) / range + 4;
+            if(red == maxComponent) {
+            	HSL[H] = (blue - green) / range;
+            } else if(green == maxComponent) {
+            	HSL[H] = 2 + (blue - red) / range;
+            } else if(blue == maxComponent) {
+            	HSL[H] = 4 +(red - green) / range;
             }
         }
-        HSL[H] /= 6;
         
+        //convert to 0-360
+        HSL[H] *= 60;
+        if (HSL[H]<0) HSL[H] += 360;
+        
+        //convert to 0-100
+        HSL[S] *= 100;
+        HSL[L] *= 100; 
+
 		return HSL;
 	}
 
@@ -73,30 +77,43 @@ public abstract class ImageProcessing {
     	int g = (pixel >> 8) & 0xff;
     	int b = (pixel) & 0xff;
     	
-    	//Convert RGB to HSL
-		float minComponent = Math.min(r, Math.min(g, b));
-        float maxComponent = Math.max(r, Math.max(g, b));
-        float range = maxComponent - minComponent;
-        float h=0,l=0;
+    	//Convert RGB to HSL (not using method above because I don't want to create
+    	//an extra float[] for every pixel.
+        float red = r / 255;
+        float green = g / 255;
+        float blue = b / 255;
+        float h=0,s=0,l=0;
         
-        l = maxComponent;
+		float minComponent = Math.min(red, Math.min(green, blue));
+        float maxComponent = Math.max(red, Math.max(green, blue));
+        float range = maxComponent - minComponent;
+        
+        l = (maxComponent + minComponent) / 2;
 
         if(range == 0) { // Monochrome image
-        	h = 0;
+        	h = s = 0;
         } else {
-            float red = r/255;
-            float green = g/255;
-            float blue = b/255;
+            s = 	(l > 0.5) ? 
+		    				range / (2 - range) 
+		    			: 
+		    				range / (maxComponent + minComponent);
             
-            if(r == maxComponent) {
-            	h = (blue - green) / range + (green < blue ? 6 : 0);
-            } else if(g == maxComponent) {
-            	h = (blue - red) / range + 2;
-            } else if(b == maxComponent) {
-            	h = (red - green) / range + 4;
+            if(red == maxComponent) {
+            	h = (blue - green) / range;
+            } else if(green == maxComponent) {
+            	h = 2 + (blue - red) / range;
+            } else if(blue == maxComponent) {
+            	h = 4 +(red - green) / range;
             }
         }
-        h /= 6;
+        
+        //convert to 0-360
+        h *= 60;
+        if (h<0) h += 360;
+        
+        //convert to 0-100
+        s *= 100;
+        l *= 100; 
 
         //Convert the HSL into a single "brightness" representation
 		return (float)(l * 0.5 + ((h / 360) * 50));

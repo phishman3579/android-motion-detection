@@ -37,8 +37,8 @@ public abstract class MotionDetection {
 			return false;
 		}
 
-		State state = new State(first, width, height); 
-		Comparer ic = new Comparer(4, 4, 200);
+		State state = new State(first, (width/10), (height/10)); 
+		Comparer ic = new Comparer(20, 20, 0);
 		ic.setDebugMode(1);
 		Comparison c = ic.compare(mPreviousStatus, state);
 		

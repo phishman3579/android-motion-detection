@@ -50,6 +50,27 @@ public class MotionDetectionActivity extends Activity {
 		previewHolder = preview.getHolder();
 		previewHolder.addCallback(surfaceCallback);
 		previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		
+		int r = 255;
+		int g = 0;
+		int b = 0;
+		float[] HSL = ImageProcessing.convertToHSL(r, g, b);
+		String out = "r="+r+" g="+g+" b="+b+" h="+(HSL[ImageProcessing.H])+" s="+(HSL[ImageProcessing.S])+" l="+(HSL[ImageProcessing.L]);
+		Log.d(TAG, out); //HSL: 0° 100% 50%
+		
+		r = 0;
+		g = 255;
+		b = 0;
+		HSL = ImageProcessing.convertToHSL(r, g, b);
+		out = "r="+r+" g="+g+" b="+b+" h="+(HSL[ImageProcessing.H])+" s="+(HSL[ImageProcessing.S])+" l="+(HSL[ImageProcessing.L]);
+		Log.d(TAG, out); //HSL: 120° 100% 50%
+
+		r = 0;
+		g = 0;
+		b = 255;
+		HSL = ImageProcessing.convertToHSL(r, g, b);
+		out = "r="+r+" g="+g+" b="+b+" h="+(HSL[ImageProcessing.H])+" s="+(HSL[ImageProcessing.S])+" l="+(HSL[ImageProcessing.L]);
+		Log.d(TAG, out); //HSL: 240° 100% 50%
 	}
 
 	@Override
