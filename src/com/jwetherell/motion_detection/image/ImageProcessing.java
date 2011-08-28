@@ -60,14 +60,14 @@ public abstract class ImageProcessing {
             }
         }
         
-        //convert to 0-360
+        //convert to 0-360 (degrees)
         HSL[H] *= 60;
         if (HSL[H]<0) HSL[H] += 360;
         
-        //convert to 0-100
+        //convert to 0-100 (percent)
         HSL[S] *= 100;
-        HSL[L] *= 100; 
-
+        HSL[L] *= 100;
+        
 		return HSL;
 	}
 
@@ -82,7 +82,7 @@ public abstract class ImageProcessing {
         float red = r / 255;
         float green = g / 255;
         float blue = b / 255;
-        float h=0,s=0,l=0;
+        float h=0,l=0;
         
 		float minComponent = Math.min(red, Math.min(green, blue));
         float maxComponent = Math.max(red, Math.max(green, blue));
@@ -90,14 +90,7 @@ public abstract class ImageProcessing {
         
         l = (maxComponent + minComponent) / 2;
 
-        if(range == 0) { // Monochrome image
-        	h = s = 0;
-        } else {
-            s = 	(l > 0.5) ? 
-		    				range / (2 - range) 
-		    			: 
-		    				range / (maxComponent + minComponent);
-            
+        if(range > 0) {
             if(red == maxComponent) {
             	h = (blue - green) / range;
             } else if(green == maxComponent) {
@@ -112,8 +105,7 @@ public abstract class ImageProcessing {
         if (h<0) h += 360;
         
         //convert to 0-100
-        s *= 100;
-        l *= 100; 
+        l *= 100;
 
         //Convert the HSL into a single "brightness" representation
 		return (float)(l * 0.5 + ((h / 360) * 50));

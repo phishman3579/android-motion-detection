@@ -21,10 +21,10 @@ public abstract class MotionDetection {
 	private static int[] mPrevious = null;
 	private static int mPreviousWidth = 0;
 	private static int mPreviousHeight = 0;
-	private static State mPreviousStatus = null;
+	private static State mPreviousState = null;
 	
 	public static int[] getPrevious() {
-		return (mPrevious!=null)?mPrevious.clone():null;
+		return ((mPrevious!=null)?mPrevious.clone():null);
 	}
 
 	protected static boolean isDifferentComparingState(int[] first, int width, int height) {
@@ -32,18 +32,13 @@ public abstract class MotionDetection {
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
-		if (mPreviousStatus==null) {
-			mPreviousStatus = new State(mPrevious, width, height);
-			return false;
-		}
+		if (mPreviousState==null) mPreviousState = new State(mPrevious, mPreviousWidth, mPreviousHeight);
 
-		State state = new State(first, (width/10), (height/10)); 
-		Comparer ic = new Comparer(20, 20, 0);
+		State state = new State(first, width, height); 
+		Comparer ic = new Comparer((width/10), (height/10), 0);
 		ic.setDebugMode(1);
-		Comparison c = ic.compare(mPreviousStatus, state);
-		
-		mPreviousStatus = new State(mPrevious, width, height);
-		
+		Comparison c = ic.compare(mPreviousState, state);
+
 		boolean different = c.isDifferent();
 		String output = "isDifferent="+different;
 		if (different) {
@@ -52,6 +47,8 @@ public abstract class MotionDetection {
 			Log.d(TAG, output);
 		}
 
+		mPreviousState = state;
+		
 		return different;
 	}
 	

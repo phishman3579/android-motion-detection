@@ -32,6 +32,7 @@ public class Comparer {
 	// compare two images.
 	public Comparison compare(State s1, State s2) {
 		if (s1==null || s2==null) return null;
+		if (s1.getWidth()!=s2.getWidth() || s1.getHeight()!=s2.getHeight()) return null;
 		
 		int cx = comparex;
 		if (cx > s1.getWidth()) cx = s1.getWidth();
@@ -54,8 +55,9 @@ public class Comparer {
 			if (debugMode > 0) output.append("|");
 			ty = y*by;
 			for (int x = 0; x < cx; x++) {
-				int b1 = aggregateMapArea(s1.getMap(), x*bx, ty, bx, by);
-				int b2 = aggregateMapArea(s2.getMap(), x*bx, ty, bx, by);
+				int tx = x*bx;
+				int b1 = aggregateMapArea(s1.getMap(), tx, ty, bx, by);
+				int b2 = aggregateMapArea(s2.getMap(), tx, ty, bx, by);
 				int diff = Math.abs(b1 - b2);
 				variance[y][x] = diff;
 				// the difference in a certain region has passed the threshold value
@@ -73,7 +75,7 @@ public class Comparer {
 	
 	private static int aggregateMapArea(int[][] map, int ox, int oy, int w, int h) {
 		if (map==null) return Integer.MIN_VALUE;
-		
+
 		int t = 0;
 		for (int i = 0; i < h; i++) {
 			int ty = oy+i;
