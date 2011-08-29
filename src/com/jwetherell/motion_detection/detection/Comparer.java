@@ -34,36 +34,37 @@ public class Comparer {
 		if (s1==null || s2==null) return null;
 		if (s1.getWidth()!=s2.getWidth() || s1.getHeight()!=s2.getHeight()) return null;
 		
-		int cx = comparex;
-		if (cx > s1.getWidth()) cx = s1.getWidth();
-		int cy = comparey;
-		if (cy > s1.getHeight()) cy = s1.getHeight();
+		// number of boxes
+		int xBoxes = comparex;
+		if (xBoxes > s1.getWidth()) xBoxes = s1.getWidth();
+		int yBoxes = comparey;
+		if (yBoxes > s1.getHeight()) yBoxes = s1.getHeight();
 		
-		// how many points per section
-		int bx = (int)(Math.floor(s1.getWidth() / cx));
-		if (bx <= 0) bx = 1;
-		int by = (int)(Math.floor(s1.getHeight() / cy));
-		if (by <= 0) by = 1;
-		int[][] variance = new int[cy][cx];
+		// how many points per box
+		int xPixelsPerBox = (int)(Math.floor(s1.getWidth() / xBoxes));
+		if (xPixelsPerBox <= 0) xPixelsPerBox = 1;
+		int yPixelsPerBox = (int)(Math.floor(s1.getHeight() / yBoxes));
+		if (yPixelsPerBox <= 0) yPixelsPerBox = 1;
+		int[][] variance = new int[yBoxes][xBoxes];
 		
 		// set to a different by default, if a change is found then flag non-match
 		boolean different = false;
 		// loop through whole image and compare individual blocks of images
 		int ty = 0;
-		for (int y = 0; y < cy; y++) {
+		for (int y = 0; y < yBoxes; y++) {
 			StringBuilder output = new StringBuilder();
 			if (debugMode > 0) output.append("|");
-			ty = y*by;
-			for (int x = 0; x < cx; x++) {
-				int tx = x*bx;
-				int b1 = aggregateMapArea(s1.getMap(), tx, ty, bx, by);
-				int b2 = aggregateMapArea(s2.getMap(), tx, ty, bx, by);
+			ty = y*yPixelsPerBox;
+			for (int x = 0; x < xBoxes; x++) {
+				int tx = x*xPixelsPerBox;
+				int b1 = aggregateMapArea(s1.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
+				int b2 = aggregateMapArea(s2.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
 				int diff = Math.abs(b1 - b2);
 				variance[y][x] = diff;
 				// the difference in a certain region has passed the threshold value
 				if (diff > leniency) different = true;
-				if (debugMode == 1) output.append((diff > leniency ? "X" : " "));
-				if (debugMode == 2) output.append(diff + (x < cx - 1 ? "," : ""));
+				if (debugMode == 1) output.append((different ? "X" : " "));
+				if (debugMode == 2) output.append(diff + (x < xBoxes - 1 ? "," : ""));
 			}
 			if (debugMode > 0) {
 				output.append("|");
@@ -77,11 +78,14 @@ public class Comparer {
 		if (map==null) return Integer.MIN_VALUE;
 
 		int t = 0;
-		for (int i = 0; i < h; i++) {
-			int ty = oy+i;
-			for (int j = 0; j < w; j++) t += map[ty][ox+j];
+		for (int y = 0; y < h; y++) {
+			int ty = oy+y;
+			for (int x = 0; x < w; x++) {
+				int tx = ox+x;
+				t += map[ty][tx];
+			}
 		}
-		return (int)(t/(w*h));
+		return (t/(w*h));
 	}
 
 	public int getComparex() {

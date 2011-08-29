@@ -82,8 +82,8 @@ public class MotionDetectionActivity extends Activity {
 			Camera.Size size = cam.getParameters().getPreviewSize();
 			if (size == null) return;
 
-				DetectionThread thread = new DetectionThread(data,size.width,size.height);
-				thread.start();
+			DetectionThread thread = new DetectionThread(data,size.width,size.height);
+			thread.start();
 		}
 	};
 
@@ -150,7 +150,7 @@ public class MotionDetectionActivity extends Activity {
 	    @Override
 	    public void run() {
 			if (!processing.compareAndSet(false, true)) return;
-			
+
 			Looper.prepare();
 			Log.d(TAG, "BEGIN PROCESSING...");
 	        try {
@@ -159,7 +159,10 @@ public class MotionDetectionActivity extends Activity {
 				if (SAVE_PREVIOUS) pre = MotionDetection.getPrevious();
 				
 				//Current frame (with changes)
-				int[] rgb = ImageProcessing.decodeYUV420SP(data, width, height);
+				long bRGB = System.currentTimeMillis();
+				int[] rgb = ImageProcessing.decodeYUV420SPtoRGB(data, width, height);
+				long aRGB = System.currentTimeMillis();
+				Log.d(TAG, "Convert to RGB "+(aRGB-bRGB));
 				
 				//Current frame (without changes)
 				int[] org = null;

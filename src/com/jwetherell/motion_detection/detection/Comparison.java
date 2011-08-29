@@ -1,5 +1,7 @@
 package com.jwetherell.motion_detection.detection;
 
+import android.graphics.Color;
+
 /**
  * This class is adapted from the web site below. It is used to indicate the variance in two state objects.
  * http://mindmeat.blogspot.com/2008/11/java-image-comparison.html
@@ -25,25 +27,35 @@ public class Comparison {
 		this.height = variance.length;
 		this.width = variance[0].length;
 	}
- 
-	/*
-	public BufferedImage getChangeIndicator(BufferedImage cx, Comparer comparer) {
-		// setup change display image
-		Graphics2D gc = cx.createGraphics();
-		gc.setColor(Color.RED);
 
-		float bx = (cx.getWidth() / width);
-		float by = (cx.getHeight() / height);
+	public void getChangeIndicator(int[] data, int width, int height, Comparer comparer) {
+		int bx = (width / this.width);
+		int by = (height / this.height);
 
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if (variance[y][x] > comparer.leniency)
-					gc.drawRect((int)(x * bx), (int)(y * by), (int)bx, (int)by);
+		int tx = 0;
+		int ty = 0;
+		for (int y = 0; y < by; y++) {
+			ty = (int)(y * by);
+			for (int x = 0; x < bx; x++) {
+				tx = (int)(x * bx);
+				if (variance[y][x] > comparer.getLeniency()) {
+					paintArea(data,tx,ty,bx,by);
+				}
 			}
 		}
-		return cx;
 	}
-	*/
+
+	private static void paintArea(int[] data, int ox, int oy, int w, int h) {
+		if (data==null) return;
+
+		int ty = 0;
+		for (int y = 1; y <= h; y++) {
+			ty = oy*y;
+			for (int x = 0, xy=ty; x < w; x++, xy++) {
+				data[xy] = Color.RED;
+			}
+		}
+	}
 	
 	public int[][] getVariance() {
 		return variance;
