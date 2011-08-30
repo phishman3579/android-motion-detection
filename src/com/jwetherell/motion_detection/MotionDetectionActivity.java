@@ -159,16 +159,21 @@ public class MotionDetectionActivity extends Activity {
 				if (SAVE_PREVIOUS) pre = MotionDetection.getPrevious();
 				
 				//Current frame (with changes)
-				long bRGB = System.currentTimeMillis();
-				int[] rgb = ImageProcessing.decodeYUV420SPtoRGB(data, width, height);
-				long aRGB = System.currentTimeMillis();
-				Log.d(TAG, "Convert to RGB "+(aRGB-bRGB));
+				long bConversion = System.currentTimeMillis();
+				int[] img = null;
+				if (MotionDetection.USE_RGB) {
+					img = ImageProcessing.decodeYUV420SPtoRGB(data, width, height);
+				} else {
+					img = ImageProcessing.decodeYUV420SPtoLuminescence(data, width, height);
+				}
+				long aConversion = System.currentTimeMillis();
+				Log.d(TAG, "Converstion="+(aConversion-bConversion));
 				
 				//Current frame (without changes)
 				int[] org = null;
-				if (SAVE_ORIGINAL && rgb!=null) org = rgb.clone();
+				if (SAVE_ORIGINAL && img!=null) org = img.clone();
 				
-				if (rgb!=null && MotionDetection.detect(rgb, width, height)) {
+				if (img!=null && MotionDetection.detect(img, width, height)) {
 					// The delay is necessary to avoid taking a picture while in the
 					// middle of taking another. This problem can causes some phones
 					// to reboot.
@@ -177,13 +182,22 @@ public class MotionDetectionActivity extends Activity {
 						mReferenceTime = now;
 						
 						Bitmap previous = null;
-						if (SAVE_PREVIOUS && pre!=null) previous = ImageProcessing.rgbToBitmap(pre, width, height);
+						if (SAVE_PREVIOUS && pre!=null) {
+							if (MotionDetection.USE_RGB) previous = ImageProcessing.rgbToBitmap(pre, width, height);
+							else previous = ImageProcessing.lumToGreyscale(img, width, height);
+						}
 						
 						Bitmap original = null;
-						if (SAVE_ORIGINAL && org!=null) original = ImageProcessing.rgbToBitmap(org, width, height);
+						if (SAVE_ORIGINAL && org!=null) {
+							if (MotionDetection.USE_RGB) original = ImageProcessing.rgbToBitmap(org, width, height);
+							else original = ImageProcessing.lumToGreyscale(img, width, height);
+						}
 						
 						Bitmap bitmap = null;
-						if (SAVE_CHANGES && rgb!=null) bitmap = ImageProcessing.rgbToBitmap(rgb, width, height);
+						if (SAVE_CHANGES && img!=null) {
+							if (MotionDetection.USE_RGB) bitmap = ImageProcessing.rgbToBitmap(img, width, height);
+							else bitmap = ImageProcessing.lumToGreyscale(img, width, height);
+						}
 						
 						Log.i(TAG,"Saving.. previous="+previous+" original="+original+" bitmap="+bitmap);
 						new SavePhotoTask().execute(previous,original,bitmap);

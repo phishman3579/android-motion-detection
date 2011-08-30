@@ -1,11 +1,11 @@
 package com.jwetherell.motion_detection.image;
 
 import java.io.ByteArrayOutputStream;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
-import android.util.Log;
+
 
 /**
  * This abstract class is used to process images.
@@ -74,86 +74,18 @@ public abstract class ImageProcessing {
         //Since they were converted from float to int
 		return (new int[]{(int)h,(int)s,(int)l});
 	}
-
-	public static int getBrightnessAtPoint(int pixel) {
-		//Get RGB from Integer
-		int r = (pixel >> 16) & 0xff;
-    	int g = (pixel >> 8) & 0xff;
-    	int b = (pixel) & 0xff;
-
-    	//Convert RGB to HSL (not using method above because I don't want to create
-    	//an extra float[] for every pixel.
-        float red = r;
-        float green = g;
-        float blue = b;
-        red = red / 255;
-        green = green / 255;
-        blue = blue / 255;
-
-        float h=0,s=0,l=0;
-        float minComponent = Math.min(red, Math.min(green, blue));
-        float maxComponent = Math.max(red, Math.max(green, blue));
-        float range = maxComponent - minComponent;
-        
-        l = (maxComponent + minComponent) / 2;
-
-        if(range == 0) { // Monochrome image
-        	h = s = 0;
-        } else {
-            s = 	(l > 0.5) ? 
-		    			range / (2 - range) 
-		    		: 
-		    			range / (maxComponent + minComponent);
-            if (Float.compare(red,maxComponent)==0) {
-            	h = (blue - green) / range;
-            } else if(Float.compare(green,maxComponent)==0) {
-            	h = 2 + (blue - red) / range;
-            } else if(Float.compare(blue,maxComponent)==0) {
-            	h = 4 +(red - green) / range;
-            } else {
-            	Log.e("TAG", "Should not get here!");
-            }
-        }
-
-        //convert to 0-360
-        h = h * 60;
-        if (h<0) h = h + 360;
-        
-        //convert to 0-100
-        s = s * 100;
-        l = l * 100;
-
-        //Convert the HSL into a single "brightness" representation
-        //brightness is between 0-100 using 50% lightness and 50% hue
-        int brightness = (int)((l * 0.5) + ((h / 360) * 50)); 
-        return brightness;
-	}
 	
-	public static int[][] decodeYUV420SPtoHSL(byte[] yuv420sp, int width, int height) {
+	public static int[] decodeYUV420SPtoLuminescence(byte[] yuv420sp, int width, int height) {
 		if (yuv420sp==null) return null;
 		
 		final int frameSize = width * height;
-		int[][] hsl = new int[frameSize][3];
+		int[] hsl = new int[frameSize];
 
 	    for (int j = 0, yp = 0; j < height; j++) {
-	        int uvp = frameSize + (j >> 1) * width, u = 0, v = 0;
 	        for (int i = 0; i < width; i++, yp++) {
 	            int y = (0xff & ((int) yuv420sp[yp])) - 16;
 	            if (y < 0) y = 0;
-	            if ((i & 1) == 0) {
-	                v = (0xff & yuv420sp[uvp++]) - 128;
-	                u = (0xff & yuv420sp[uvp++]) - 128;
-	            }
-	            int y1192 = 1192 * y;
-	            int r = (y1192 + 1634 * v);
-	            int g = (y1192 - 833 * v - 400 * u);
-	            int b = (y1192 + 2066 * u);
-
-	            if (r < 0) r = 0; else if (r > 262143) r = 262143;
-	            if (g < 0) g = 0; else if (g > 262143) g = 262143;
-	            if (b < 0) b = 0; else if (b > 262143) b = 262143;
-
-	            hsl[yp] = convertToHSL(r,g,b);
+	            hsl[yp] = y;
 	        }
 	    }
 	    return hsl;
@@ -194,6 +126,19 @@ public abstract class ImageProcessing {
 		
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		bitmap.setPixels(rgb, 0, width, 0, 0, width, height);
+		return bitmap;
+	}
+	
+	public static Bitmap lumToGreyscale(int[] lum, int width, int height) {
+		if (lum==null) return null;
+		
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+		for(int y=0, xy=0; y<bitmap.getHeight(); y++) {
+			for(int x=0; x<bitmap.getWidth(); x++, xy++) {
+				int luma = lum[xy];
+				bitmap.setPixel(x,y,Color.argb(1,luma,luma,luma));
+			}
+		}
 		return bitmap;
 	}
 	

@@ -1,6 +1,5 @@
 package com.jwetherell.motion_detection.detection;
 
-import com.jwetherell.motion_detection.image.ImageProcessing;
 
 /**
  * This class is adapted from the web site below. It creates a state object based on the brightness of a RGB image
@@ -36,9 +35,9 @@ public class State {
 		average = 0;
 		for (int y = 0, xy=0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++, xy++) {
-				int ta = ImageProcessing.getBrightnessAtPoint(data[xy]);
-				map[y][x] = ta;
-				average += ta;
+				int lum = data[xy];
+				map[y][x] = lum;
+				average += lum;
 			}
 		}
 		average = (average / (this.width * this.height));

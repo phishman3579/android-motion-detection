@@ -1,9 +1,8 @@
 package com.jwetherell.motion_detection.detection;
 
-import com.jwetherell.motion_detection.image.ImageProcessing;
-
 import android.graphics.Color;
 import android.util.Log;
+
 
 /**
  * This abstract class is used to process integer arrays containing RGB data and detects motion.
@@ -12,22 +11,19 @@ import android.util.Log;
  */
 public abstract class MotionDetection {
 	private static final String TAG = "MotionDetection";
-	private static final boolean USE_RGB = true;
-	private static final boolean USE_HSL = false;
-	private static final boolean USE_STATE = false;
-	
-	//RGB Specific settings
-	private static final int mRgbThreshold = 10000; //Number of different pixels
-	private static final int mRgbPixelThreshold = 50; //Difference in pixel
 
-	//HSL Specific settings
-	private static final int mHslThreshold = 1000; //Number of different pixels
-	private static final int mHslPixelThreshold = 1; //Difference in brightness
-	
+	//Specific settings
+	private static final int mThreshold = 10000; //Number of different pixels
+	private static final int mPixelThreshold = 50; //Difference in pixel
+
 	private static int[] mPrevious = null;
 	private static int mPreviousWidth = 0;
 	private static int mPreviousHeight = 0;
 	private static State mPreviousState = null;
+	
+	public static final boolean USE_RGB = true;
+	public static final boolean USE_LUM = false;
+	public static final boolean USE_STATE = false;
 	
 	public static int[] getPrevious() {
 		return ((mPrevious!=null)?mPrevious.clone():null);
@@ -54,12 +50,12 @@ public abstract class MotionDetection {
 			Log.d(TAG, output);
 		}
 
-		mPreviousState = state.clone();
+		mPreviousState = state;
 		
 		return different;
 	}
 
-	protected static boolean isDifferentComparingHSL(int[] first, int width, int height) {
+	protected static boolean isDifferentComparingLuminescence(int[] first, int width, int height) {
 		if (first==null || mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
@@ -78,10 +74,7 @@ public abstract class MotionDetection {
 				if (otherPix < 0) otherPix = 0;
 				if (otherPix > 255) otherPix = 255;
 
-				int b1 = ImageProcessing.getBrightnessAtPoint(pix);
-				int b2 = ImageProcessing.getBrightnessAtPoint(otherPix);
-				
-				if (Math.abs(b1 - b2) >= mHslPixelThreshold) {
+				if (Math.abs(pix - otherPix) >= mPixelThreshold) {
 					totDifferentPixels++;
 					//Paint different pixel red
 					first[ij] = Color.RED;
@@ -89,7 +82,7 @@ public abstract class MotionDetection {
 			}
 		}
 		if (totDifferentPixels <= 0) totDifferentPixels = 1;
-		boolean different = totDifferentPixels > mHslThreshold;
+		boolean different = totDifferentPixels > mThreshold;
 		
 		int percent = 100/(size/totDifferentPixels);
 		String output = "Number of different pixels: " + totDifferentPixels + "> " + percent + "%";
@@ -121,7 +114,7 @@ public abstract class MotionDetection {
 				if (otherPix < 0) otherPix = 0;
 				if (otherPix > 255) otherPix = 255;
 
-				if (Math.abs(pix - otherPix) >= mRgbPixelThreshold) {
+				if (Math.abs(pix - otherPix) >= mPixelThreshold) {
 					totDifferentPixels++;
 					//Paint different pixel red
 					first[ij] = Color.RED;
@@ -129,7 +122,7 @@ public abstract class MotionDetection {
 			}
 		}
 		if (totDifferentPixels <= 0) totDifferentPixels = 1;
-		boolean different = totDifferentPixels > mRgbThreshold;
+		boolean different = totDifferentPixels > mThreshold;
 		
 		int percent = 100/(size/totDifferentPixels);
 		String output = "Number of different pixels: " + totDifferentPixels + "> " + percent + "%";
@@ -158,7 +151,7 @@ public abstract class MotionDetection {
 		long bDetection = System.currentTimeMillis();
 		boolean motionDetected = false;
 		if (USE_RGB) motionDetected = isDifferentComparingRGB(rgb, width, height);
-		if (USE_HSL) motionDetected = isDifferentComparingHSL(rgb, width, height);
+		if (USE_LUM) motionDetected = isDifferentComparingLuminescence(rgb, width, height);
 		if (USE_STATE) motionDetected = isDifferentComparingState(rgb, width, height);
 		long aDetection = System.currentTimeMillis();
 		Log.d(TAG, "Detection "+(aDetection-bDetection));
