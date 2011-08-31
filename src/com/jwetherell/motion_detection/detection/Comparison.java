@@ -18,7 +18,7 @@ public class Comparison {
 	private boolean different = false;
 
 	public Comparison(State s1, State s2, int[][] variance, boolean different) {
-		if (variance==null) throw new NullPointerException();
+		if (variance==null || s1==null || s2==null) throw new NullPointerException();
 		
 		this.s1 = s1;
 		this.s2 = s2;
@@ -30,6 +30,8 @@ public class Comparison {
 	}
 
 	public void getChangeIndicator(int[] data, int width, int height, Comparer comparer) {
+		if (data==null || comparer==null) throw new NullPointerException();
+		
 		int xBoxes = comparer.getCompareX();
 		if (xBoxes > s1.getWidth()) xBoxes = s1.getWidth();
 		int yBoxes = comparer.getCompareY();

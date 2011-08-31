@@ -33,7 +33,7 @@ public class State {
 		average = 0;
 		for (int y = 0, xy=0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++, xy++) {
-				average += data[xy];;
+				average += data[xy];
 			}
 		}
 		average = (average / (this.width * this.height));

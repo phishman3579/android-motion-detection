@@ -30,7 +30,9 @@ public abstract class MotionDetection {
 	}
 
 	protected static boolean isDifferentComparingState(int[] first, int width, int height) {
-		if (first==null || mPrevious==null) return false;
+		if (first==null) throw new NullPointerException();
+		
+		if (mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
@@ -56,7 +58,9 @@ public abstract class MotionDetection {
 	}
 
 	protected static boolean isDifferentComparingLuminescence(int[] first, int width, int height) {
-		if (first==null || mPrevious==null) return false;
+		if (first==null) throw new NullPointerException();
+		
+		if (mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
@@ -96,7 +100,9 @@ public abstract class MotionDetection {
 	}
 	
 	protected static boolean isDifferentComparingRGB(int[] first, int width, int height) {
-		if (first==null || mPrevious==null) return false;
+		if (first==null) throw new NullPointerException();
+		
+		if (mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
@@ -136,7 +142,8 @@ public abstract class MotionDetection {
 	}
 	
 	public static boolean detect(int[] rgb, int width, int height) {
-		if (rgb==null) return false;
+		if (rgb==null) throw new NullPointerException();
+		
 		int[] original = rgb.clone();
 		
 		// Create the "mPrevious" picture, the one that will be used to check the next frame against.

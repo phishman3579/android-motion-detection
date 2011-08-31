@@ -31,8 +31,10 @@ public class Comparer {
 	
 	// compare two images.
 	public Comparison compare(State s1, State s2) {
-		if (s1==null || s2==null) return null;
-		if (s1.getWidth()!=s2.getWidth() || s1.getHeight()!=s2.getHeight()) return null;
+		if (s1==null || s2==null) 
+			throw new NullPointerException();
+		if (s1.getWidth()!=s2.getWidth() || s1.getHeight()!=s2.getHeight()) 
+			throw new IllegalArgumentException();
 		
 		// number of boxes
 		int xBoxes = comparex;
