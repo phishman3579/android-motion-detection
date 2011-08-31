@@ -1,5 +1,7 @@
 package com.jwetherell.motion_detection.detection;
 
+import com.jwetherell.motion_detection.Globals;
+
 import android.graphics.Color;
 import android.util.Log;
 
@@ -20,10 +22,6 @@ public abstract class MotionDetection {
 	private static int mPreviousWidth = 0;
 	private static int mPreviousHeight = 0;
 	private static State mPreviousState = null;
-	
-	public static final boolean USE_RGB = true;
-	public static final boolean USE_LUM = false;
-	public static final boolean USE_STATE = false;
 	
 	public static int[] getPrevious() {
 		return ((mPrevious!=null)?mPrevious.clone():null);
@@ -150,9 +148,9 @@ public abstract class MotionDetection {
 
 		long bDetection = System.currentTimeMillis();
 		boolean motionDetected = false;
-		if (USE_RGB) motionDetected = isDifferentComparingRGB(rgb, width, height);
-		if (USE_LUM) motionDetected = isDifferentComparingLuminescence(rgb, width, height);
-		if (USE_STATE) motionDetected = isDifferentComparingState(rgb, width, height);
+		if (Globals.USE_RGB) motionDetected = isDifferentComparingRGB(rgb, width, height);
+		if (Globals.USE_LUMA) motionDetected = isDifferentComparingLuminescence(rgb, width, height);
+		if (Globals.USE_STATE) motionDetected = isDifferentComparingState(rgb, width, height);
 		long aDetection = System.currentTimeMillis();
 		Log.d(TAG, "Detection "+(aDetection-bDetection));
 		

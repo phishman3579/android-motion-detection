@@ -75,7 +75,7 @@ public abstract class ImageProcessing {
 		return (new int[]{(int)h,(int)s,(int)l});
 	}
 	
-	public static int[] decodeYUV420SPtoLuminescence(byte[] yuv420sp, int width, int height) {
+	public static int[] decodeYUV420SPtoLuma(byte[] yuv420sp, int width, int height) {
 		if (yuv420sp==null) return null;
 		
 		final int frameSize = width * height;
@@ -129,7 +129,7 @@ public abstract class ImageProcessing {
 		return bitmap;
 	}
 	
-	public static Bitmap lumToGreyscale(int[] lum, int width, int height) {
+	public static Bitmap lumaToGreyscale(int[] lum, int width, int height) {
 		if (lum==null) return null;
 		
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);

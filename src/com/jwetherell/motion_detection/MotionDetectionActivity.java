@@ -28,10 +28,6 @@ import android.view.SurfaceView;
  */
 public class MotionDetectionActivity extends Activity {
 	private static final String TAG = "MotionDetectionActivity";
-	private static final boolean SAVE_PREVIOUS = true;
-	private static final boolean SAVE_ORIGINAL = true;
-	private static final boolean SAVE_CHANGES = true;
-	private static final int PICTURE_DELAY = 10000;
 
 	private static SurfaceView preview = null;
 	private static SurfaceHolder previewHolder = null;
@@ -156,47 +152,47 @@ public class MotionDetectionActivity extends Activity {
 	        try {
 	        	//Previous frame
 	        	int[] pre = null;
-				if (SAVE_PREVIOUS) pre = MotionDetection.getPrevious();
+				if (Globals.SAVE_PREVIOUS) pre = MotionDetection.getPrevious();
 				
 				//Current frame (with changes)
 				long bConversion = System.currentTimeMillis();
 				int[] img = null;
-				if (MotionDetection.USE_RGB) {
+				if (Globals.USE_RGB) {
 					img = ImageProcessing.decodeYUV420SPtoRGB(data, width, height);
 				} else {
-					img = ImageProcessing.decodeYUV420SPtoLuminescence(data, width, height);
+					img = ImageProcessing.decodeYUV420SPtoLuma(data, width, height);
 				}
 				long aConversion = System.currentTimeMillis();
 				Log.d(TAG, "Converstion="+(aConversion-bConversion));
 				
 				//Current frame (without changes)
 				int[] org = null;
-				if (SAVE_ORIGINAL && img!=null) org = img.clone();
+				if (Globals.SAVE_ORIGINAL && img!=null) org = img.clone();
 				
 				if (img!=null && MotionDetection.detect(img, width, height)) {
 					// The delay is necessary to avoid taking a picture while in the
 					// middle of taking another. This problem can causes some phones
 					// to reboot.
 					long now = System.currentTimeMillis();
-					if (now > (mReferenceTime + PICTURE_DELAY)) {
+					if (now > (mReferenceTime + Globals.PICTURE_DELAY)) {
 						mReferenceTime = now;
 						
 						Bitmap previous = null;
-						if (SAVE_PREVIOUS && pre!=null) {
-							if (MotionDetection.USE_RGB) previous = ImageProcessing.rgbToBitmap(pre, width, height);
-							else previous = ImageProcessing.lumToGreyscale(img, width, height);
+						if (Globals.SAVE_PREVIOUS && pre!=null) {
+							if (Globals.USE_RGB) previous = ImageProcessing.rgbToBitmap(pre, width, height);
+							else previous = ImageProcessing.lumaToGreyscale(pre, width, height);
 						}
 						
 						Bitmap original = null;
-						if (SAVE_ORIGINAL && org!=null) {
-							if (MotionDetection.USE_RGB) original = ImageProcessing.rgbToBitmap(org, width, height);
-							else original = ImageProcessing.lumToGreyscale(img, width, height);
+						if (Globals.SAVE_ORIGINAL && org!=null) {
+							if (Globals.USE_RGB) original = ImageProcessing.rgbToBitmap(org, width, height);
+							else original = ImageProcessing.lumaToGreyscale(org, width, height);
 						}
 						
 						Bitmap bitmap = null;
-						if (SAVE_CHANGES && img!=null) {
-							if (MotionDetection.USE_RGB) bitmap = ImageProcessing.rgbToBitmap(img, width, height);
-							else bitmap = ImageProcessing.lumToGreyscale(img, width, height);
+						if (Globals.SAVE_CHANGES && img!=null) {
+							if (Globals.USE_RGB) bitmap = ImageProcessing.rgbToBitmap(img, width, height);
+							else bitmap = ImageProcessing.lumaToGreyscale(img, width, height);
 						}
 						
 						Log.i(TAG,"Saving.. previous="+previous+" original="+original+" bitmap="+bitmap);
