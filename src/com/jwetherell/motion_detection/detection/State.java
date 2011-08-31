@@ -10,7 +10,7 @@ package com.jwetherell.motion_detection.detection;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class State {
-	private int[][] map = null;
+	private int[] map = null;
 	private int width;
 	private int height;
 	private int average;
@@ -23,27 +23,23 @@ public class State {
 	}
 	
 	public State(int[] data, int width, int height) {
-		if (data==null) return;
+		if (data==null) throw new NullPointerException();
 		
+		this.map = data.clone();
 		this.width = width;
 		this.height = height;
-		
-		// setup brightness map
-		map = new int[height][width];
-		
+
 		// build map and stats
 		average = 0;
 		for (int y = 0, xy=0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++, xy++) {
-				int lum = data[xy];
-				map[y][x] = lum;
-				average += lum;
+				average += data[xy];;
 			}
 		}
 		average = (average / (this.width * this.height));
 	}
 
-	public int[][] getMap() {
+	public int[] getMap() {
 		return map;
 	}
 
@@ -59,10 +55,10 @@ public class State {
 	public String toString() {
 		StringBuilder output = new StringBuilder();
 		output.append("h="+height+" w="+width+"\n");
-		for (int y = 0; y < height; y++) {
+		for (int y = 0, xy = 0; y < height; y++) {
 			output.append('|');
-			for (int x = 0;x < width; x++) {
-				output.append(map[y][x]);
+			for (int x = 0;x < width; x++, xy++) {
+				output.append(map[xy]);
 				output.append('|');
 			}
 			output.append("\n");

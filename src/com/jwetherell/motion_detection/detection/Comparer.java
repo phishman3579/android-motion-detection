@@ -45,21 +45,27 @@ public class Comparer {
 		if (xPixelsPerBox <= 0) xPixelsPerBox = 1;
 		int yPixelsPerBox = (int)(Math.floor(s1.getHeight() / yBoxes));
 		if (yPixelsPerBox <= 0) yPixelsPerBox = 1;
+		
+		// Boxes
 		int[][] variance = new int[yBoxes][xBoxes];
 		
 		// set to a different by default, if a change is found then flag non-match
 		boolean different = false;
 		// loop through whole image and compare individual blocks of images
 		int ty = 0;
+		int tx = 0;
+		int b1 = 0;
+		int b2 = 0;
+		int diff = 0;
 		for (int y = 0; y < yBoxes; y++) {
 			StringBuilder output = new StringBuilder();
 			if (debugMode > 0) output.append("|");
 			ty = y*yPixelsPerBox;
 			for (int x = 0; x < xBoxes; x++) {
-				int tx = x*xPixelsPerBox;
-				int b1 = aggregateMapArea(s1.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
-				int b2 = aggregateMapArea(s2.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
-				int diff = Math.abs(b1 - b2);
+				tx = x*xPixelsPerBox;
+				b1 = aggregateMapArea(s1.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
+				b2 = aggregateMapArea(s2.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
+				diff = Math.abs(b1 - b2);
 				variance[y][x] = diff;
 				// the difference in a certain region has passed the threshold value
 				if (diff > leniency) different = true;
@@ -74,25 +80,27 @@ public class Comparer {
 		return (new Comparison(s1, s2, variance, different));
 	}
 	
-	private static int aggregateMapArea(int[][] map, int ox, int oy, int w, int h) {
-		if (map==null) return Integer.MIN_VALUE;
+	private static int aggregateMapArea(int[] map, int ox, int oy, int w, int h) {
+		if (map==null) throw new NullPointerException();
 
 		int t = 0;
+		int ty = 0;
+		int tx = 0;
 		for (int y = 0; y < h; y++) {
-			int ty = oy+y;
+			ty = oy+y;
 			for (int x = 0; x < w; x++) {
-				int tx = ox+x;
-				t += map[ty][tx];
+				tx = ox+x;
+				t += map[ty+tx];
 			}
 		}
 		return (t/(w*h));
 	}
 
-	public int getComparex() {
+	public int getCompareX() {
 		return comparex;
 	}
 
-	public int getComparey() {
+	public int getCompareY() {
 		return comparey;
 	}
 

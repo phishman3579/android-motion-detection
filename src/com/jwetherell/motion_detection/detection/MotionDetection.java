@@ -15,8 +15,10 @@ public abstract class MotionDetection {
 	private static final String TAG = "MotionDetection";
 
 	//Specific settings
-	private static final int mThreshold = 10000; //Number of different pixels
-	private static final int mPixelThreshold = 50; //Difference in pixel
+	private static final int mPixelThreshold = 50; //Difference in pixel (RGB & LUMA)
+	private static final int mThreshold = 10000; //Number of different pixels (RGB & LUMA)
+	private static final int mLeniency = 100; //Difference of aggregate map (State)
+	private static final int mDebugMode = 2; //State based debug (State)
 
 	private static int[] mPrevious = null;
 	private static int mPreviousWidth = 0;
@@ -35,8 +37,8 @@ public abstract class MotionDetection {
 		if (mPreviousState==null) mPreviousState = new State(mPrevious, mPreviousWidth, mPreviousHeight);
 		State state = new State(first, width, height); 
 
-		Comparer ic = new Comparer((width/10), (height/10), 25);
-		ic.setDebugMode(1);
+		Comparer ic = new Comparer((width/50), (height/50), mLeniency);
+		ic.setDebugMode(mDebugMode);
 		Comparison c = ic.compare(state,mPreviousState);
 
 		boolean different = c.isDifferent();
