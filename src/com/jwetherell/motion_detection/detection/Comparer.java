@@ -1,6 +1,6 @@
 package com.jwetherell.motion_detection.detection;
 
-import android.util.Log;
+import android.graphics.Color;
 
 /**
  * This class is adapted from the web site below. It is used to compare two State objects.
@@ -10,100 +10,126 @@ import android.util.Log;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Comparer {
-	private static final String TAG = "Comparer";
-	
-	private int comparex;
-	private int comparey;
+	private State state1 = null;
+	private State state2 = null;
+	private int xBoxes;
+	private int yBoxes;
+	private int xPixelsPerBox;
+	private int yPixelsPerBox;
 	private int leniency;
 	private int debugMode; // 1: textual indication of change, 2: difference of factors
+	
+	private int[][] variance = null;
+	private boolean different = false;
 
-	public Comparer(int comparex, int comparey, int leniency) {
-		this.comparex = comparex;
-		this.comparey = comparey;
+	public Comparer(State s1, State s2, int xBoxes, int yBoxes, int leniency) {		
+		this.state1 = s1;
+		this.state2 = s2;
+		
+		this.xBoxes = xBoxes;
+		if (xBoxes > state1.getWidth()) xBoxes = state1.getWidth();
+		
+		this.yBoxes = yBoxes;
+		if (yBoxes > state1.getHeight()) yBoxes = state1.getHeight();
+		
 		this.leniency = leniency;
 		this.debugMode = 0;
+		
+		// how many points per box
+		this.xPixelsPerBox = (int)(Math.floor(state1.getWidth() / xBoxes));
+		if (xPixelsPerBox <= 0) xPixelsPerBox = 1;
+		this.yPixelsPerBox = (int)(Math.floor(state1.getHeight() / yBoxes));
+		if (yPixelsPerBox <= 0) yPixelsPerBox = 1;
+		
+		this.different = isDifferent(state1,state2);
 	}
- 
-	// want to see some stuff in the console as the comparison is happening?
-	public void setDebugMode(int m) {
-		this.debugMode = m;
-	}
-	
-	// compare two images.
-	public Comparison compare(State s1, State s2) {
+
+	// compare two images and populate the variance variable
+	public boolean isDifferent(State s1, State s2) {
 		if (s1==null || s2==null) 
 			throw new NullPointerException();
 		if (s1.getWidth()!=s2.getWidth() || s1.getHeight()!=s2.getHeight()) 
 			throw new IllegalArgumentException();
-		
-		// number of boxes
-		int xBoxes = comparex;
-		if (xBoxes > s1.getWidth()) xBoxes = s1.getWidth();
-		int yBoxes = comparey;
-		if (yBoxes > s1.getHeight()) yBoxes = s1.getHeight();
-		
-		// how many points per box
-		int xPixelsPerBox = (int)(Math.floor(s1.getWidth() / xBoxes));
-		if (xPixelsPerBox <= 0) xPixelsPerBox = 1;
-		int yPixelsPerBox = (int)(Math.floor(s1.getHeight() / yBoxes));
-		if (yPixelsPerBox <= 0) yPixelsPerBox = 1;
-		
+
 		// Boxes
-		int[][] variance = new int[yBoxes][xBoxes];
+		this.variance = new int[yBoxes][xBoxes];
 		
 		// set to a different by default, if a change is found then flag non-match
 		boolean different = false;
 		// loop through whole image and compare individual blocks of images
-		int ty = 0;
-		int tx = 0;
 		int b1 = 0;
 		int b2 = 0;
 		int diff = 0;
 		for (int y = 0; y < yBoxes; y++) {
-			StringBuilder output = new StringBuilder();
-			if (debugMode > 0) output.append("|");
-			ty = y*yPixelsPerBox;
 			for (int x = 0; x < xBoxes; x++) {
-				tx = x*xPixelsPerBox;
-				b1 = aggregateMapArea(s1.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
-				b2 = aggregateMapArea(s2.getMap(), tx, ty, xPixelsPerBox, yPixelsPerBox);
+				b1 = aggregateMapArea(state1.getMap(), x, y);
+				b2 = aggregateMapArea(state2.getMap(), x, y);
 				diff = Math.abs(b1 - b2);
 				variance[y][x] = diff;
 				// the difference in a certain region has passed the threshold value
 				if (diff > leniency) different = true;
-				if (debugMode == 1) output.append((different ? "X" : " "));
-				if (debugMode == 2) output.append(diff + (x < xBoxes - 1 ? "," : ""));
-			}
-			if (debugMode > 0) {
-				output.append("|");
-				Log.d(TAG, output.toString());
 			}
 		}
-		return (new Comparison(s1, s2, variance, different));
+		return different;
 	}
 	
-	private static int aggregateMapArea(int[] map, int ox, int oy, int w, int h) {
+	private int aggregateMapArea(int[] map, int xBox, int yBox) {
 		if (map==null) throw new NullPointerException();
 
-		int t = 0;
-		int ty = 0;
-		int tx = 0;
-		for (int y = 0; y < h; y++) {
-			ty = oy+y;
-			for (int x = 0; x < w; x++) {
-				tx = ox+x;
-				t += map[ty+tx];
+		int i = 0;
+		int rowOffset = (yBox*yPixelsPerBox)*(yBoxes*yPixelsPerBox);
+		int columnOffset = (xBox*xPixelsPerBox);
+		int iy = 0;
+		for (int y = 0; y < yPixelsPerBox; y++) {
+			iy = (y*(yBoxes*yPixelsPerBox));
+			for (int x = 0; x < xPixelsPerBox; x++) {
+				i += map[rowOffset+columnOffset+iy+x];
 			}
 		}
-		return (t/(w*h));
+
+		return (i/(xPixelsPerBox*yPixelsPerBox));
+	}
+
+	public void paintDifferences(int[] data) {
+		if (data==null) throw new NullPointerException();
+
+		int diff = 0;
+		for (int y = 0; y < yBoxes; y++) {
+			for (int x = 0; x < xBoxes; x++) {
+				diff = variance[y][x];
+				if (diff > leniency) paintRed(data, x, y);
+			}
+		}
+	}
+	
+	private int paintRed(int[] data, int xBox, int yBox) {
+		if (data==null) throw new NullPointerException();
+
+		int i = 0;
+		int rowOffset = (yBox*yPixelsPerBox)*(yBoxes*yPixelsPerBox);
+		int columnOffset = (xBox*xPixelsPerBox);
+		int iy = 0;
+		for (int y = 0; y < yPixelsPerBox; y++) {
+			iy = (y*(yBoxes*yPixelsPerBox));
+			for (int x = 0; x < xPixelsPerBox; x++) {
+				data[rowOffset+columnOffset+iy+x] = Color.RED;;
+			}
+		}
+
+		return (i/(xPixelsPerBox*yPixelsPerBox));
+	}
+	 
+	// want to see some stuff in the console as the comparison is happening?
+	public void setDebugMode(int m) {
+		this.debugMode = m;
 	}
 
 	public int getCompareX() {
-		return comparex;
+		return xBoxes;
 	}
 
 	public int getCompareY() {
-		return comparey;
+		return yBoxes;
 	}
 
 	public int getLeniency() {
@@ -112,5 +138,25 @@ public class Comparer {
 
 	public int getDebugMode() {
 		return debugMode;
+	}
+
+	public boolean isDifferent() {
+		return different;
+	}
+	
+	@Override
+	public String toString() {
+		int diff = 0;
+		StringBuilder output = new StringBuilder();
+		for (int y = 0; y < yBoxes; y++) {
+			output.append('|');
+			for (int x = 0; x < xBoxes; x++) {
+				diff = variance[y][x];
+				if (debugMode == 1) output.append((different ? 'X' : ' '));
+				if (debugMode == 2) output.append(diff + (x < xBoxes - 1 ? "," : ""));
+			}
+			output.append("|\n");
+		}
+		return output.toString();
 	}
 }

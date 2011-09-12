@@ -17,7 +17,7 @@ public abstract class MotionDetection {
 	//Specific settings
 	private static final int mPixelThreshold = 50; //Difference in pixel (RGB & LUMA)
 	private static final int mThreshold = 10000; //Number of different pixels (RGB & LUMA)
-	private static final int mLeniency = 100; //Difference of aggregate map (State)
+	private static final int mLeniency = 50; //Difference of aggregate map (State)
 	private static final int mDebugMode = 2; //State based debug (State)
 
 	private static int[] mPrevious = null;
@@ -31,7 +31,7 @@ public abstract class MotionDetection {
 
 	protected static boolean isDifferentComparingState(int[] first, int width, int height) {
 		if (first==null) throw new NullPointerException();
-		
+
 		if (mPrevious==null) return false;
 		if (first.length != mPrevious.length) return true;
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
@@ -39,15 +39,15 @@ public abstract class MotionDetection {
 		if (mPreviousState==null) mPreviousState = new State(mPrevious, mPreviousWidth, mPreviousHeight);
 		State state = new State(first, width, height); 
 
-		Comparer ic = new Comparer((width/50), (height/50), mLeniency);
+		Comparer ic = new Comparer(state,mPreviousState,(width/50), (height/50), mLeniency);
 		ic.setDebugMode(mDebugMode);
-		Comparison c = ic.compare(state,mPreviousState);
+		System.out.println(ic.toString());
 
-		boolean different = c.isDifferent();
+		boolean different = ic.isDifferent();
 		String output = "isDifferent="+different;
 		if (different) {
 			Log.e(TAG, output);
-			c.getChangeIndicator(first, width, height, ic);
+			ic.paintDifferences(first);
 		} else {
 			Log.d(TAG, output);
 		}
