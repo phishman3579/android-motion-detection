@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.jwetherell.motion_detection.detection.MotionDetection;
+import com.jwetherell.motion_detection.detection.AggregateLumaMotionDetection;
+import com.jwetherell.motion_detection.detection.IMotionDetection;
+import com.jwetherell.motion_detection.detection.LumaMotionDetection;
+import com.jwetherell.motion_detection.detection.RgbMotionDetection;
 import com.jwetherell.motion_detection.image.ImageProcessing;
 
 import android.app.Activity;
@@ -35,6 +38,8 @@ public class MotionDetectionActivity extends Activity {
 	private static boolean inPreview = false;
 	private static long mReferenceTime = 0;
 	
+	private static IMotionDetection detector = null;
+	
 	private static volatile AtomicBoolean processing = new AtomicBoolean(false);
 
 	@Override
@@ -46,6 +51,15 @@ public class MotionDetectionActivity extends Activity {
 		previewHolder = preview.getHolder();
 		previewHolder.addCallback(surfaceCallback);
 		previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		
+		if (Globals.USE_RGB) {
+			detector = new RgbMotionDetection();
+		} else if (Globals.USE_LUMA) {
+			detector = new LumaMotionDetection();
+		} else {
+			//Using State based (aggregate map)
+			detector = new AggregateLumaMotionDetection();
+		}
 	}
 
 	@Override
@@ -152,7 +166,7 @@ public class MotionDetectionActivity extends Activity {
 	        try {
 	        	//Previous frame
 	        	int[] pre = null;
-				if (Globals.SAVE_PREVIOUS) pre = MotionDetection.getPrevious();
+				if (Globals.SAVE_PREVIOUS) pre = detector.getPrevious();
 				
 				//Current frame (with changes)
 				long bConversion = System.currentTimeMillis();
@@ -169,7 +183,7 @@ public class MotionDetectionActivity extends Activity {
 				int[] org = null;
 				if (Globals.SAVE_ORIGINAL && img!=null) org = img.clone();
 				
-				if (img!=null && MotionDetection.detect(img, width, height)) {
+				if (img!=null && detector.detect(img, width, height)) {
 					// The delay is necessary to avoid taking a picture while in the
 					// middle of taking another. This problem can causes some phones
 					// to reboot.

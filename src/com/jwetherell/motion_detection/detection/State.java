@@ -14,14 +14,7 @@ public class State {
 	private int width;
 	private int height;
 	private int average;
-	
-	public State(State other) {
-		this.map = other.map.clone();
-		this.width = other.width;
-		this.height = other.height;
-		this.average = other.average;
-	}
-	
+
 	public State(int[] data, int width, int height) {
 		if (data==null) throw new NullPointerException();
 		
@@ -30,13 +23,13 @@ public class State {
 		this.height = height;
 
 		// build map and stats
-		average = 0;
+		this.average = 0;
 		for (int y = 0, xy=0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++, xy++) {
-				average += data[xy];
+				this.average += data[xy];
 			}
 		}
-		average = (average / (this.width * this.height));
+		this.average = (this.average / (this.width * this.height));
 	}
 
 	public int[] getMap() {
@@ -64,11 +57,5 @@ public class State {
 			output.append("\n");
 		}
 		return output.toString();
-	}
-	
-	@Override
-	public State clone() {
-		State newState = new State(this);
-		return newState;
 	}
 }
