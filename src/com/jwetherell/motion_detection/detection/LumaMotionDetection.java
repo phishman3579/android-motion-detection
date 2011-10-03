@@ -20,6 +20,10 @@ public class LumaMotionDetection implements IMotionDetection {
 	private static int mPreviousWidth = 0;
 	private static int mPreviousHeight = 0;
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int[] getPrevious() {
 		return ((mPrevious!=null)?mPrevious.clone():null);
 	}
@@ -65,7 +69,12 @@ public class LumaMotionDetection implements IMotionDetection {
 
 		return different;
 	}
-	
+
+	/**
+	 * Detect motion using comparing luma values.
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean detect(int[] luma, int width, int height) {
 		if (luma==null) throw new NullPointerException();
 		

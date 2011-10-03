@@ -42,6 +42,9 @@ public class MotionDetectionActivity extends Activity {
 	
 	private static volatile AtomicBoolean processing = new AtomicBoolean(false);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,11 +65,17 @@ public class MotionDetectionActivity extends Activity {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -74,6 +83,9 @@ public class MotionDetectionActivity extends Activity {
 		camera = Camera.open();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -86,6 +98,9 @@ public class MotionDetectionActivity extends Activity {
 	}
 
 	private PreviewCallback previewCallback = new PreviewCallback() {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void onPreviewFrame(byte[] data, Camera cam) {
 			if (data == null) return;
@@ -98,6 +113,9 @@ public class MotionDetectionActivity extends Activity {
 	};
 
 	private SurfaceHolder.Callback surfaceCallback=new SurfaceHolder.Callback() {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			try {
@@ -108,6 +126,9 @@ public class MotionDetectionActivity extends Activity {
 			}
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 			Camera.Parameters parameters = camera.getParameters();
@@ -121,6 +142,9 @@ public class MotionDetectionActivity extends Activity {
 			inPreview=true;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void surfaceDestroyed(SurfaceHolder holder) {
 			// Ignore
@@ -156,8 +180,11 @@ public class MotionDetectionActivity extends Activity {
 			this.width = width;
 			this.height = height;
 		}
-		
-	    @Override
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 	    public void run() {
 			if (!processing.compareAndSet(false, true)) return;
 
@@ -227,6 +254,9 @@ public class MotionDetectionActivity extends Activity {
 	};
 
 	private class SavePhotoTask extends AsyncTask<Bitmap, Integer, Integer> {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		protected Integer doInBackground(Bitmap... data) {
 			for (int i=0; i<data.length; i++) {

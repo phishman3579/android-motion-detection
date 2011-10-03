@@ -22,7 +22,11 @@ public abstract class ImageProcessing {
 	public static final int S = 1;
 	public static final int L = 2;
 
-	//Get RGB from Integer
+	/**
+	 * Get RGB values from pixel.
+	 * @param pixel Integer representation of a pixel.
+	 * @return
+	 */
 	public static float[] getARGB(int pixel) {
     	int a = (pixel >> 24) & 0xff;
     	int r = (pixel >> 16) & 0xff;
@@ -31,9 +35,15 @@ public abstract class ImageProcessing {
     	return (new float[]{a,r,g,b});
 	}
 	
-	//Get HSL from RGB
-    //H is 0-360 (degrees)
-    //H and S are 0-100 (percent)
+	/**
+	 * Get HSL (Hue, Saturation, Luma) from RGB.
+	 * Note1: H is 0-360 (degrees)
+	 * Note2: S and L are 0-100 (percent)
+	 * @param r Red value.
+	 * @param g Green value.
+	 * @param b Blue value.
+	 * @return Integer array representing an HSL pixel.
+	 */
 	public static int[] convertToHSL(int r, int g, int b) {
         float red = r / 255;
         float green = g / 255;
@@ -75,8 +85,16 @@ public abstract class ImageProcessing {
 		return (new int[]{(int)h,(int)s,(int)l});
 	}
 	
+	/**
+	 * Decode a YUV420SP image to Luma.
+	 * @param yuv420sp Byte array representing a YUV420SP image.
+	 * @param width Width of the image.
+	 * @param height Height of the image.
+	 * @return Integer array representing the Luma image.
+	 * @throws NullPointerException if yuv420sp byte array is NULL.
+	 */
 	public static int[] decodeYUV420SPtoLuma(byte[] yuv420sp, int width, int height) {
-		if (yuv420sp==null) return null;
+		if (yuv420sp==null) throw new NullPointerException();
 		
 		final int frameSize = width * height;
 		int[] hsl = new int[frameSize];
@@ -91,8 +109,16 @@ public abstract class ImageProcessing {
 	    return hsl;
 	}
 	
+	/**
+	 * Decode a YUV420SP image to RGB.
+	 * @param yuv420sp Byte array representing a YUV420SP image.
+	 * @param width Width of the image.
+	 * @param height Height of the image.
+	 * @return Integer array representing the RGB image.
+	 * @throws NullPointerException if yuv420sp byte array is NULL.
+	 */
 	public static int[] decodeYUV420SPtoRGB(byte[] yuv420sp, int width, int height) {
-		if (yuv420sp==null) return null;
+		if (yuv420sp==null) throw new NullPointerException();
 		
 		final int frameSize = width * height;
 		int[] rgb = new int[frameSize];
@@ -121,16 +147,32 @@ public abstract class ImageProcessing {
 	    return rgb;
 	}
 
+	/**
+	 * Convert an RGB image into a Bitmap.
+	 * @param rgb Integer array representing an RGB image.
+	 * @param width Width of the image.
+	 * @param height Height of the image.
+	 * @return Bitmap of the RGB image.
+	 * @throws NullPointerException if RGB integer array is NULL.
+	 */
 	public static Bitmap rgbToBitmap(int[] rgb, int width, int height) {
-		if (rgb==null) return null;
+		if (rgb==null) throw new NullPointerException();
 		
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		bitmap.setPixels(rgb, 0, width, 0, 0, width, height);
 		return bitmap;
 	}
-	
+
+	/**
+	 * Convert an Luma image into Greyscale.
+	 * @param lum Integer array representing an Luma image.
+	 * @param width Width of the image.
+	 * @param height Height of the image.
+	 * @return Bitmap of the Luma image.
+	 * @throws NullPointerException if RGB integer array is NULL.
+	 */
 	public static Bitmap lumaToGreyscale(int[] lum, int width, int height) {
-		if (lum==null) return null;
+		if (lum==null) throw new NullPointerException();
 		
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		for(int y=0, xy=0; y<bitmap.getHeight(); y++) {
@@ -142,8 +184,14 @@ public abstract class ImageProcessing {
 		return bitmap;
 	}
 	
+	/**
+	 * Rotate the given Bitmap by the given degrees.
+	 * @param bmp Bitmap to rotate.
+	 * @param degrees Degrees to rotate.
+	 * @return Bitmap which was rotated.
+	 */
 	public static Bitmap rotate(Bitmap bmp, int degrees) {
-		if (bmp==null) return null;
+		if (bmp==null) throw new NullPointerException();
 		
         //getting scales of the image  
         int width = bmp.getWidth();  
@@ -160,8 +208,14 @@ public abstract class ImageProcessing {
         return rotatedBmp;
 	}
 	
+	/**
+	 * Rotate the given image in byte array format by the given degrees.
+	 * @param bmp Bitmap to rotate.
+	 * @param degrees Degrees to rotate.
+	 * @return Byte array format of an image which was rotated.
+	 */
 	public static byte[] rotate(byte[] data, int degrees) {
-		if (data==null) return null;
+		if (data==null) throw new NullPointerException();
 		
 		//Convert the byte data into a Bitmap
         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);  

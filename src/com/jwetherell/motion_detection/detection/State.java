@@ -32,18 +32,33 @@ public class State {
 		this.average = (this.average / (this.width * this.height));
 	}
 
+	/**
+	 * Get Map of the State.
+	 * @return integer array of the State.
+	 */
 	public int[] getMap() {
 		return map;
 	}
 
+	/**
+	 * Get the width of the State.
+	 * @return integer representing the width of the state. 
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * Get the height of the State.
+	 * @return integer representing the height of the state. 
+	 */
 	public int getHeight() {
 		return height;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		StringBuilder output = new StringBuilder();

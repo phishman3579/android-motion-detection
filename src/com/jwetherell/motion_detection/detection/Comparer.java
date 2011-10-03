@@ -59,7 +59,13 @@ public class Comparer {
 		this.different = isDifferent(this.state1,this.state2);
 	}
 	
-	// compare two images and populate the variance variable
+	/**
+	 * Compare two images and populate the variance variable
+	 * @param s1 State for image one.
+	 * @param s2 State for image two.
+	 * @return True is the two images are different.
+	 * @throws NullPointerException if s1 or s2 is NULL.
+	 */
 	public boolean isDifferent(State s1, State s2) {
 		if (s1==null || s2==null) 
 			throw new NullPointerException();
@@ -111,6 +117,11 @@ public class Comparer {
 		return (i/(xPix*yPix));
 	}
 
+	/**
+	 * Given the int array of an image, paint the pixels that are different.
+	 * @param data int array of an image.
+	 * @throws NullPointerException if data int array is NULL.
+	 */
 	public void paintDifferences(int[] data) {
 		if (data==null) throw new NullPointerException();
 
@@ -141,26 +152,49 @@ public class Comparer {
 		}
 	}
 
+	/**
+	 * Number of X Boxes.
+	 * @return int representing the number of X boxes.
+	 */
 	public int getCompareX() {
 		return xBoxes;
 	}
 
+	/**
+	 * Number of Y Boxes.
+	 * @return int representing the number of Y boxes.
+	 */
 	public int getCompareY() {
 		return yBoxes;
 	}
 
+	/**
+	 * Leniency of the pixel comparison.
+	 * @return int representing the leniency.
+	 */
 	public int getLeniency() {
 		return leniency;
 	}
 
+	/**
+	 * Debug mode of the comparer.
+	 * @return int representing the debug mode.
+	 */
 	public int getDebugMode() {
 		return debugMode;
 	}
 
+	/**
+	 * Are the two States different.
+	 * @return True is the States are different.
+	 */
 	public boolean isDifferent() {
 		return different;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		int diff = 0;

@@ -19,7 +19,11 @@ public class RgbMotionDetection implements IMotionDetection {
 	private static int[] mPrevious = null;
 	private static int mPreviousWidth = 0;
 	private static int mPreviousHeight = 0;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int[] getPrevious() {
 		return ((mPrevious!=null)?mPrevious.clone():null);
 	}
@@ -65,7 +69,12 @@ public class RgbMotionDetection implements IMotionDetection {
 
 		return different;
 	}
-	
+
+	/**
+	 * Detect motion comparing RGB pixel values.
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean detect(int[] rgb, int width, int height) {
 		if (rgb==null) throw new NullPointerException();
 		

@@ -22,6 +22,10 @@ public class AggregateLumaMotionDetection implements IMotionDetection {
 	private static int mPreviousHeight;
 	private static State mPreviousState = null;
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int[] getPrevious() {
 		return ((mPrevious!=null)?mPrevious.clone():null);
 	}
@@ -54,7 +58,12 @@ public class AggregateLumaMotionDetection implements IMotionDetection {
 		
 		return different;
 	}
-	
+
+	/**
+	 * Detect motion using aggregate luma values.
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean detect(int[] luma, int width, int height) {
 		if (luma==null) throw new NullPointerException();
 		
