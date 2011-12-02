@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.jwetherell.motion_detection.data.GlobalData;
 import com.jwetherell.motion_detection.detection.AggregateLumaMotionDetection;
 import com.jwetherell.motion_detection.detection.IMotionDetection;
 import com.jwetherell.motion_detection.detection.LumaMotionDetection;
 import com.jwetherell.motion_detection.detection.RgbMotionDetection;
 import com.jwetherell.motion_detection.image.ImageProcessing;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -23,13 +23,14 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+
 /**
- * This class extends Activity to handle a picture preview, process the frame for motion, and then save the 
- * file to the SD card.
+ * This class extends Activity to handle a picture preview, process the frame for motion, and then 
+ * save the file to the SD card.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class MotionDetectionActivity extends Activity {
+public class MotionDetectionActivity extends SensorsActivity {
 	private static final String TAG = "MotionDetectionActivity";
 
 	private static SurfaceView preview = null;
@@ -37,9 +38,8 @@ public class MotionDetectionActivity extends Activity {
 	private static Camera camera = null;
 	private static boolean inPreview = false;
 	private static long mReferenceTime = 0;
-	
 	private static IMotionDetection detector = null;
-	
+
 	private static volatile AtomicBoolean processing = new AtomicBoolean(false);
 
 	/**
@@ -73,6 +73,20 @@ public class MotionDetectionActivity extends Activity {
 		super.onConfigurationChanged(newConfig);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        camera.setPreviewCallback(null);
+        if (inPreview) camera.stopPreview();
+        inPreview = false;
+        camera.release();
+        camera = null;
+    }
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -81,20 +95,6 @@ public class MotionDetectionActivity extends Activity {
 		super.onResume();
 
 		camera = Camera.open();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		camera.setPreviewCallback(null);
-		if (inPreview) camera.stopPreview();
-		inPreview = false;
-		camera.release();
-		camera = null;
 	}
 
 	private PreviewCallback previewCallback = new PreviewCallback() {
@@ -107,8 +107,10 @@ public class MotionDetectionActivity extends Activity {
 			Camera.Size size = cam.getParameters().getPreviewSize();
 			if (size == null) return;
 
-			DetectionThread thread = new DetectionThread(data,size.width,size.height);
-			thread.start();
+			if (!GlobalData.isPhoneInMotion()) {
+			    DetectionThread thread = new DetectionThread(data,size.width,size.height);
+			    thread.start();
+			}
 		}
 	};
 
@@ -169,8 +171,8 @@ public class MotionDetectionActivity extends Activity {
 
 		return result;
 	}
-	
-	private class DetectionThread extends Thread {
+
+	private static final class DetectionThread extends Thread {
 		private byte[] data;
 		private int width;
 		private int height;
@@ -188,9 +190,8 @@ public class MotionDetectionActivity extends Activity {
 	    public void run() {
 			if (!processing.compareAndSet(false, true)) return;
 
-			Looper.prepare();
 			Log.d(TAG, "BEGIN PROCESSING...");
-	        try {
+			try {
 	        	//Previous frame
 	        	int[] pre = null;
 				if (Globals.SAVE_PREVIOUS) pre = detector.getPrevious();
@@ -237,6 +238,7 @@ public class MotionDetectionActivity extends Activity {
 						}
 						
 						Log.i(TAG,"Saving.. previous="+previous+" original="+original+" bitmap="+bitmap);
+						Looper.prepare();
 						new SavePhotoTask().execute(previous,original,bitmap);
 					} else {
 						Log.i(TAG, "Not taking picture because not enough time has passed since the creation of the Surface");
@@ -245,7 +247,7 @@ public class MotionDetectionActivity extends Activity {
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        } finally {
-	        	processing.set(false);
+	            processing.set(false);
 	        }
 			Log.d(TAG, "END PROCESSING...");
 
@@ -253,7 +255,7 @@ public class MotionDetectionActivity extends Activity {
 	    }
 	};
 
-	private class SavePhotoTask extends AsyncTask<Bitmap, Integer, Integer> {
+	private static final class SavePhotoTask extends AsyncTask<Bitmap, Integer, Integer> {
 		/**
 		 * {@inheritDoc}
 		 */
