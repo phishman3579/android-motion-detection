@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jwetherell.motion_detection.data.GlobalData;
 
+
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
