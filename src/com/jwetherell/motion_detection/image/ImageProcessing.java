@@ -27,7 +27,7 @@ public abstract class ImageProcessing {
 	/**
 	 * Get RGB values from pixel.
 	 * @param pixel Integer representation of a pixel.
-	 * @return
+	 * @return float array of a,r,g,b values.
 	 */
 	public static float[] getARGB(int pixel) {
     	int a = (pixel >> 24) & 0xff;
@@ -212,7 +212,7 @@ public abstract class ImageProcessing {
 	
 	/**
 	 * Rotate the given image in byte array format by the given degrees.
-	 * @param bmp Bitmap to rotate.
+	 * @param data Bitmap to rotate in byte array form.
 	 * @param degrees Degrees to rotate.
 	 * @return Byte array format of an image which was rotated.
 	 */

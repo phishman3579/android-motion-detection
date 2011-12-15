@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class GlobalData {
+public abstract class GlobalData {
     private GlobalData() { };
     
     private static final AtomicBoolean phoneInMotion = new AtomicBoolean(false);

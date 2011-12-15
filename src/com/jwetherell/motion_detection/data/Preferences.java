@@ -6,7 +6,9 @@ package com.jwetherell.motion_detection.data;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class Preferences {	
+public abstract class Preferences {	
+    private Preferences() { }
+    
 	//Which motion detection to use
 	public static boolean USE_RGB = true;
 	public static boolean USE_LUMA = false;
