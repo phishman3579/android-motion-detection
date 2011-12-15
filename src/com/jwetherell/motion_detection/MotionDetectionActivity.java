@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jwetherell.motion_detection.data.GlobalData;
+import com.jwetherell.motion_detection.data.Preferences;
 import com.jwetherell.motion_detection.detection.AggregateLumaMotionDetection;
 import com.jwetherell.motion_detection.detection.IMotionDetection;
 import com.jwetherell.motion_detection.detection.LumaMotionDetection;
@@ -55,9 +56,9 @@ public class MotionDetectionActivity extends SensorsActivity {
 		previewHolder.addCallback(surfaceCallback);
 		previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		
-		if (Globals.USE_RGB) {
+		if (Preferences.USE_RGB) {
 			detector = new RgbMotionDetection();
-		} else if (Globals.USE_LUMA) {
+		} else if (Preferences.USE_LUMA) {
 			detector = new LumaMotionDetection();
 		} else {
 			//Using State based (aggregate map)
@@ -194,12 +195,12 @@ public class MotionDetectionActivity extends SensorsActivity {
 			try {
 	        	//Previous frame
 	        	int[] pre = null;
-				if (Globals.SAVE_PREVIOUS) pre = detector.getPrevious();
+				if (Preferences.SAVE_PREVIOUS) pre = detector.getPrevious();
 				
 				//Current frame (with changes)
 				long bConversion = System.currentTimeMillis();
 				int[] img = null;
-				if (Globals.USE_RGB) {
+				if (Preferences.USE_RGB) {
 					img = ImageProcessing.decodeYUV420SPtoRGB(data, width, height);
 				} else {
 					img = ImageProcessing.decodeYUV420SPtoLuma(data, width, height);
@@ -209,31 +210,31 @@ public class MotionDetectionActivity extends SensorsActivity {
 				
 				//Current frame (without changes)
 				int[] org = null;
-				if (Globals.SAVE_ORIGINAL && img!=null) org = img.clone();
+				if (Preferences.SAVE_ORIGINAL && img!=null) org = img.clone();
 				
 				if (img!=null && detector.detect(img, width, height)) {
 					// The delay is necessary to avoid taking a picture while in the
 					// middle of taking another. This problem can causes some phones
 					// to reboot.
 					long now = System.currentTimeMillis();
-					if (now > (mReferenceTime + Globals.PICTURE_DELAY)) {
+					if (now > (mReferenceTime + Preferences.PICTURE_DELAY)) {
 						mReferenceTime = now;
 						
 						Bitmap previous = null;
-						if (Globals.SAVE_PREVIOUS && pre!=null) {
-							if (Globals.USE_RGB) previous = ImageProcessing.rgbToBitmap(pre, width, height);
+						if (Preferences.SAVE_PREVIOUS && pre!=null) {
+							if (Preferences.USE_RGB) previous = ImageProcessing.rgbToBitmap(pre, width, height);
 							else previous = ImageProcessing.lumaToGreyscale(pre, width, height);
 						}
 						
 						Bitmap original = null;
-						if (Globals.SAVE_ORIGINAL && org!=null) {
-							if (Globals.USE_RGB) original = ImageProcessing.rgbToBitmap(org, width, height);
+						if (Preferences.SAVE_ORIGINAL && org!=null) {
+							if (Preferences.USE_RGB) original = ImageProcessing.rgbToBitmap(org, width, height);
 							else original = ImageProcessing.lumaToGreyscale(org, width, height);
 						}
 						
 						Bitmap bitmap = null;
-						if (Globals.SAVE_CHANGES && img!=null) {
-							if (Globals.USE_RGB) bitmap = ImageProcessing.rgbToBitmap(img, width, height);
+						if (Preferences.SAVE_CHANGES && img!=null) {
+							if (Preferences.USE_RGB) bitmap = ImageProcessing.rgbToBitmap(img, width, height);
 							else bitmap = ImageProcessing.lumaToGreyscale(img, width, height);
 						}
 						

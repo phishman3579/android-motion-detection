@@ -1,6 +1,12 @@
-package com.jwetherell.motion_detection;
+package com.jwetherell.motion_detection.data;
 
-public class Globals {	
+
+/**
+ * This class is used to store preferences on how to decode images and what to save.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
+public class Preferences {	
 	//Which motion detection to use
 	public static boolean USE_RGB = true;
 	public static boolean USE_LUMA = false;

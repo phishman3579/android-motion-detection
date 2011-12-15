@@ -22,6 +22,8 @@ public abstract class ImageProcessing {
 	public static final int S = 1;
 	public static final int L = 2;
 
+	private ImageProcessing() { }
+	
 	/**
 	 * Get RGB values from pixel.
 	 * @param pixel Integer representation of a pixel.
