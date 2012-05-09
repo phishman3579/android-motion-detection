@@ -1,6 +1,6 @@
 package com.jwetherell.motion_detection.detection;
 
-import android.util.Log;
+//import android.util.Log;
 
 
 /**
@@ -9,7 +9,7 @@ import android.util.Log;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class AggregateLumaMotionDetection implements IMotionDetection {
-	private static final String TAG = "AggregateLumaMotionDetection";
+	//private static final String TAG = "AggregateLumaMotionDetection";
 
 	//Specific settings
 	private static final int mLeniency = 10; //Difference of aggregate map of luma values
@@ -46,12 +46,12 @@ public class AggregateLumaMotionDetection implements IMotionDetection {
 		Comparer comparer = new Comparer(state, mPreviousState, mXBoxes, mYBoxes, mLeniency, mDebugMode);
 
 		boolean different = comparer.isDifferent();
-		String output = "isDifferent="+different;
+		//String output = "isDifferent="+different;
 		if (different) {
-			Log.e(TAG, output);
+			//Log.e(TAG, output);
 			comparer.paintDifferences(first);
-		} else {
-			Log.d(TAG, output);
+		//} else {
+			//Log.d(TAG, output);
 		}
 
 		mPreviousState = state;
@@ -74,13 +74,13 @@ public class AggregateLumaMotionDetection implements IMotionDetection {
 			mPrevious = original;
 			mPreviousWidth = width;
 			mPreviousHeight = height;
-			Log.i(TAG, "Creating background image");
+			//Log.i(TAG, "Creating background image");
 		}
 
-		long bDetection = System.currentTimeMillis();
+		//long bDetection = System.currentTimeMillis();
 		boolean motionDetected = isDifferent(luma, width, height);
-		long aDetection = System.currentTimeMillis();
-		Log.d(TAG, "Detection "+(aDetection-bDetection));
+		//long aDetection = System.currentTimeMillis();
+		//Log.d(TAG, "Detection "+(aDetection-bDetection));
 		
 		// Replace the current image with the previous.
 		mPrevious = original;

@@ -1,7 +1,7 @@
 package com.jwetherell.motion_detection.detection;
 
 import android.graphics.Color;
-import android.util.Log;
+//import android.util.Log;
 
 
 /**
@@ -10,7 +10,7 @@ import android.util.Log;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class LumaMotionDetection implements IMotionDetection {
-	private static final String TAG = "LumaMotionDetection";
+	//private static final String TAG = "LumaMotionDetection";
 
 	//Specific settings
 	private static final int mPixelThreshold = 50; //Difference in luma value
@@ -36,8 +36,6 @@ public class LumaMotionDetection implements IMotionDetection {
 		if (mPreviousWidth != width || mPreviousHeight != height) return true;
 
 		int totDifferentPixels = 0;
-		int size = height * width;
-
 		for (int i = 0, ij=0; i < height; i++) {
 			for (int j = 0; j < width; j++, ij++) {
 				int pix = (0xff & ((int)first[ij]));
@@ -58,7 +56,8 @@ public class LumaMotionDetection implements IMotionDetection {
 		}
 		if (totDifferentPixels <= 0) totDifferentPixels = 1;
 		boolean different = totDifferentPixels > mThreshold;
-		
+/*
+        int size = height * width;
 		int percent = 100/(size/totDifferentPixels);
 		String output = "Number of different pixels: " + totDifferentPixels + "> " + percent + "%";
 		if (different) {
@@ -66,7 +65,7 @@ public class LumaMotionDetection implements IMotionDetection {
 		} else {
 			Log.d(TAG, output);
 		}
-
+*/
 		return different;
 	}
 
@@ -85,14 +84,14 @@ public class LumaMotionDetection implements IMotionDetection {
 			mPrevious = original;
 			mPreviousWidth = width;
 			mPreviousHeight = height;
-			Log.i(TAG, "Creating background image");
+			//Log.i(TAG, "Creating background image");
 			return false;
 		}
 
-		long bDetection = System.currentTimeMillis();
+		//long bDetection = System.currentTimeMillis();
 		boolean motionDetected = isDifferent(luma, width, height);
-		long aDetection = System.currentTimeMillis();
-		Log.d(TAG, "Detection "+(aDetection-bDetection));
+		//long aDetection = System.currentTimeMillis();
+		//Log.d(TAG, "Detection "+(aDetection-bDetection));
 		
 		// Replace the current image with the previous.
 		mPrevious = original;

@@ -191,22 +191,22 @@ public class MotionDetectionActivity extends SensorsActivity {
 	    public void run() {
 			if (!processing.compareAndSet(false, true)) return;
 
-			Log.d(TAG, "BEGIN PROCESSING...");
+			//Log.d(TAG, "BEGIN PROCESSING...");
 			try {
 	        	//Previous frame
 	        	int[] pre = null;
 				if (Preferences.SAVE_PREVIOUS) pre = detector.getPrevious();
 				
 				//Current frame (with changes)
-				long bConversion = System.currentTimeMillis();
+				//long bConversion = System.currentTimeMillis();
 				int[] img = null;
 				if (Preferences.USE_RGB) {
 					img = ImageProcessing.decodeYUV420SPtoRGB(data, width, height);
 				} else {
 					img = ImageProcessing.decodeYUV420SPtoLuma(data, width, height);
 				}
-				long aConversion = System.currentTimeMillis();
-				Log.d(TAG, "Converstion="+(aConversion-bConversion));
+				//long aConversion = System.currentTimeMillis();
+				//Log.d(TAG, "Converstion="+(aConversion-bConversion));
 				
 				//Current frame (without changes)
 				int[] org = null;
@@ -250,7 +250,7 @@ public class MotionDetectionActivity extends SensorsActivity {
 	        } finally {
 	            processing.set(false);
 	        }
-			Log.d(TAG, "END PROCESSING...");
+			//Log.d(TAG, "END PROCESSING...");
 
 			processing.set(false);
 	    }
