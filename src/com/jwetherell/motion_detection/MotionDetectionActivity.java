@@ -239,7 +239,7 @@ public class MotionDetectionActivity extends SensorsActivity {
                         }
 
                         Bitmap bitmap = null;
-                        if (Preferences.SAVE_CHANGES && img != null) {
+                        if (Preferences.SAVE_CHANGES) {
                             if (Preferences.USE_RGB) bitmap = ImageProcessing.rgbToBitmap(img, width, height);
                             else bitmap = ImageProcessing.lumaToGreyscale(img, width, height);
                         }

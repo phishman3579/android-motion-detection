@@ -41,8 +41,8 @@ public class LumaMotionDetection implements IMotionDetection {
         int totDifferentPixels = 0;
         for (int i = 0, ij = 0; i < height; i++) {
             for (int j = 0; j < width; j++, ij++) {
-                int pix = (0xff & ((int) first[ij]));
-                int otherPix = (0xff & ((int) mPrevious[ij]));
+                int pix = (0xff & (first[ij]));
+                int otherPix = (0xff & (mPrevious[ij]));
 
                 // Catch any pixels that are out of range
                 if (pix < 0) pix = 0;
