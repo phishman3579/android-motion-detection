@@ -34,3 +34,6 @@ The RGB detection code is located in RgbMotionDetection.java class. The image pr
 
 I have created a MotionDetection class that detects motion comparing RGB values called RgbMotionDetection.java, a class that detects motion comparing Luminance values called LumaMotionDetection.java, and a class that detects motion comparing avergae Luminance values in regions called AggregateLumaMotionDetection.java.
 
+## Support me with a donation
+
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=phishman3579%40gmail%2ecom&lc=US&item_name=Support%20open%20source&item_number=AndroidMotionDetection&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_new">Donate to this project</a>
