@@ -4,7 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
 
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7"/>
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="23"/>
     
     <uses-feature android:name="android.hardware.camera"/>
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -12,7 +12,8 @@
 
     <application    android:icon="@drawable/icon" 
                     android:label="@string/app_name"
-                    android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+                    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                    android:allowBackup="true">
         <activity android:name=".MotionDetectionActivity"
                   android:configChanges="keyboardHidden|orientation"
                   android:screenOrientation="landscape">
