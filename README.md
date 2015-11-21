@@ -8,6 +8,7 @@ Android code to detection motion from by comparing two pictures.
 Android code to detection motion from by comparing two pictures. It comes with an Activity that initializes a camera and grabs two pictures and compares them.
 
 * Created by Justin Wetherell
+* For questions use: http://groups.google.com/forum/#!forum/android-motion-detection
 * Google: http://code.google.com/p/android-motion-detection
 * Github: http://github.com/phishman3579/android-motion-detection
 * LinkedIn: http://www.linkedin.com/in/phishman3579
